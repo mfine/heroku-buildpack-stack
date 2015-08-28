@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-if [ -n "$(find "$1" -name 'stack.yaml' -print -quit)" ]; then
-  echo "Haskell" && exit 0
+if [ -f "$1"/stack.yaml ]; then
+  echo "Haskell"
+  exit 0
 else
   exit 1
 fi
