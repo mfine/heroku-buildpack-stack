@@ -9,48 +9,37 @@ BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="$3"
 
-# Default configuration which you can change by setting environment variables
-PREBUILT=${PREBUILT:-https://s3.amazonaws.com/heroku-ghc}
-
-function export_env_dir() {
-  blacklist_regex="^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$"
-  if [ -d "$ENV_DIR" ]; then
-    echo "-----> Exporting config vars"
-    for e in $(ls "$ENV_DIR"); do
-      echo "$e" | grep -qvE "$blacklist_regex" &&
-      export "$e=$(cat $ENV_DIR/$e)"
-      :
-    done
-  fi
+function speak (){
+  echo "-----> $(date -u '+%Y-%m-%d_%H:%M:%S') $1"
 }
 
-export_env_dir
+BLACKLIST_REGEX="^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$"
+if [ -d "$ENV_DIR" ]; then
+  speak "Exporting config vars"
+  for e in $(ls "$ENV_DIR"); do
+    echo "$e" | grep -qvE "$BLACKLIST_REGEX" &&
+    export "$e=$(cat $ENV_DIR/$e)"
+    :
+  done
+fi
 
 WORK_DIR=/app
-PROFILE_PATH="$BUILD_DIR/.profile.d/haskell.sh"
+mkdir -p "$WORK_DIR/vendor"
+mkdir -p "$WORK_DIR/vendor/bin"
+mkdir -p "$WORK_DIR/vendor/ghc-libs"
 
-mkdir -p $WORK_DIR/vendor
-mkdir -p $(dirname $PROFILE_PATH)
-
-########## gmp #####################################################
-mkdir -p $WORK_DIR/vendor/ghc-libs
-if [ ! -e $CACHE_DIR/libgmp-6.0.0a ]; then
-  PREBUILT_LIB_URL=$PREBUILT/heroku-libgmp-6.0.0a.tar.gz # contains ghc-libs directories
-  echo "-----> Installing prebuilt libgmp-6.0.0a into cache"
-  mkdir -p $CACHE_DIR/libgmp-6.0.0a
-  curl -# -L "$PREBUILT_LIB_URL" | tar xz -C $CACHE_DIR/libgmp-6.0.0a
-fi
-echo "-----> Restoring libgmp-6.0.0a files from cache"
-find $CACHE_DIR/libgmp-6.0.0a/ghc-libs/ -exec cp -rP '{}' $WORK_DIR/vendor/ghc-libs/ \;
+PROFILE_DIR="$BUILD_DIR/.profile.d"
+PROFILE_PATH="$PROFILE_DIR/stack.sh"
+mkdir -p "$PROFILE_DIR"
 
 # Usage: $ set-env key value
 function set-env (){
-  echo "export $1=$2" >> $PROFILE_PATH
+  echo "export $1=$2" >> "$PROFILE_PATH"
 }
 
 # Usage: $ set-default-env key value
 function set-default-env (){
-  echo "export $1=\${$1:-$2}" >> $PROFILE_PATH
+  echo "export $1=\${$1:-$2}" >> "$PROFILE_PATH"
 }
 
 export LANG=en_US.UTF-8
@@ -58,45 +47,53 @@ export LIBRARY_PATH=$WORK_DIR/vendor/ghc-libs:/usr/lib:$LIBRARY_PATH
 export LD_LIBRARY_PATH=$LIBRARY_PATH
 export PATH=$WORK_DIR/.local/bin:$WORK_DIR/vendor/bin:$PATH
 
-########## stack ###################################################
-mkdir -p $WORK_DIR/vendor/bin
-if [ ! -e $CACHE_DIR/stack ]; then
-  echo "-----> Downloading Stack"
-  curl -# -L https://github.com/commercialhaskell/stack/releases/download/v0.1.3.1/stack-0.1.3.1-x86_64-linux.gz | gunzip > $CACHE_DIR/stack
-  cp $CACHE_DIR/stack $WORK_DIR/vendor/bin/stack
-  chmod a+x $WORK_DIR/vendor/bin/stack
-else
-  echo "-----> Restoring Stack"
-  rm -f $WORK_DIR/vendor/bin/stack
-  cp $CACHE_DIR/stack $WORK_DIR/vendor/bin/stack
-  chmod a+x $WORK_DIR/vendor/bin/stack
+########## gmp #####################################################
+LIBGMP_VER=${LIBGMP_VER:-6.0.0a}
+LIBGMP_URL=${LIBGMP_URL:-https://s3.amazonaws.com/heroku-ghc/heroku-libgmp-"$LIBGMP_VER".tar.gz}
+LIBGMP_DIR="$CACHE_DIR/libgmp-$LIBGMP_VER"
+if [ ! -e "$LIBGMP_DIR" ]; then
+  speak "Installing libgmp-$LIBGMP_VER into cache"
+  mkdir -p "$LIBGMP_DIR"
+  curl -# -L "$LIBGMP_URL" | tar xz -C "$LIBGMP_DIR"
 fi
+speak "Restoring $LIBGMP_VER files from cache"
+cp -ur "$LIBGMP_DIR/ghc-libs/" "$WORK_DIR/vendor/ghc-libs/"
 
-if [ -e $CACHE_DIR/.stack ]; then
-  echo "-----> Restoring .stack"
-  rm -fr $WORK_DIR/.stack
-  cp -R $CACHE_DIR/.stack $WORK_DIR
+########## stack exe ###############################################
+STACK_VER=${STACK_VER:-0.1.3.1}
+STACK_URL=${STACK_URL:-https://github.com/commercialhaskell/stack/releases/download/v"$STACK_VER"/stack-"$STACK_VER"-x86_64-linux.gz}
+STACK_EXE="$CACHE_DIR/stack-$STACK_VER"
+if [ ! -e "$STACK_EXE" ]; then
+  speak "Downloading stack-$STACK_VER"
+  curl -# -L "STACK_URL" | gunzip > "STACK_EXE"
+fi
+speak "Restoring stack-$STACK_VER"
+cp -u "$STACK_EXE" "$WORK_DIR/vendor/bin/stack"
+chmod a+x "$WORK_DIR/vendor/bin/stack"
+
+########## stack dir ###############################################
+STACK_DIR="$CACHE_DIR/.stack"
+if [ -e "$STACK_DIR" ]; then
+  speak "Restoring .stack"
+  cp -ur "$STACK_DIR" "$WORK_DIR"
 fi
 
 ########## project build ###########################################
-
-echo "-----> Stack"
-cd $BUILD_DIR
+speak "Running stack"
+cd "$BUILD_DIR"
 stack setup
 stack build --copy-bins
 
-echo "-----> Caching .stack"
-rm -fr $CACHE_DIR/.stack
-cp -R $WORK_DIR/.stack $CACHE_DIR
+speak "Caching .stack"
+cp -ur "$WORK_DIR/.stack" "$CACHE_DIR"
 
 # Set context environment variables.
 set-env PATH "/app/.local/bin:$PATH"
-
 set-default-env LIBRARY_PATH /app/vendor/ghc-libs:/usr/lib
 set-default-env LD_LIBRARY_PATH /app/vendor/ghc-libs:/usr/lib
 
-echo "-----> Making GHC binaries available to Heroku command line"
-mkdir -p $BUILD_DIR/vendor
-mkdir -p $BUILD_DIR/.local
-mv $WORK_DIR/vendor/ghc-libs $BUILD_DIR/vendor
-mv $WORK_DIR/.local/bin $BUILD_DIR/.local
+speak "Making stack binaries available"
+mkdir -p "$BUILD_DIR/vendor"
+mkdir -p "$BUILD_DIR/.local"
+mv "$WORK_DIR/vendor/ghc-libs" "$BUILD_DIR/vendor"
+mv "$WORK_DIR/.local/bin" "$BUILD_DIR/.local"
