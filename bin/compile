@@ -65,7 +65,7 @@ STACK_URL=${STACK_URL:-https://github.com/commercialhaskell/stack/releases/downl
 STACK_EXE="$CACHE_DIR/stack-$STACK_VER"
 if [ ! -e "$STACK_EXE" ]; then
   speak "Downloading stack-$STACK_VER"
-  curl -# -L "STACK_URL" | gunzip > "STACK_EXE"
+  curl -# -L "$STACK_URL" | gunzip > "$STACK_EXE"
 fi
 speak "Restoring stack-$STACK_VER"
 cp -u "$STACK_EXE" "$WORK_DIR/vendor/bin/stack"
