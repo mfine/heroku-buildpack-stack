@@ -57,8 +57,7 @@ if [ ! -e "$LIBGMP_DIR" ]; then
   curl -# -L "$LIBGMP_URL" | tar xz -C "$LIBGMP_DIR"
 fi
 speak "Restoring $LIBGMP_VER files from cache"
-#find "$LIBGMP_DIR/ghc-libs/" -exec cp -rP '{}' "$WORK_DIR/vendor/ghc-libs/" \;
-cp -rP "$LIBGMP_DIR/ghc-libs/*" "$WORK_DIR/vendor/ghc-libs/"
+find "$LIBGMP_DIR/ghc-libs/" -exec cp -rP '{}' "$WORK_DIR/vendor/ghc-libs/" \;
 
 ########## stack exe ###############################################
 STACK_VER=${STACK_VER:-0.1.3.1}
