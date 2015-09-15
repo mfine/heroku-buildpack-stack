@@ -13,6 +13,8 @@ function speak (){
   echo "-----> $(date -u '+%Y-%m-%d_%H:%M:%S') $1"
 }
 
+speak "Starting..."
+
 BLACKLIST_REGEX="^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$"
 if [ -d "$ENV_DIR" ]; then
   speak "Exporting config vars"
@@ -90,3 +92,5 @@ mkdir -p "$BUILD_DIR/vendor"
 mkdir -p "$BUILD_DIR/.local"
 mv "$WORK_DIR/vendor/ghc-libs" "$BUILD_DIR/vendor"
 mv "$WORK_DIR/.local/bin" "$BUILD_DIR/.local"
+
+speak "Finished!"
