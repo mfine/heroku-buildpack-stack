@@ -60,7 +60,7 @@ if [ ! -e "$LIBGMP_DIR" ]; then
   curl -# -L "$LIBGMP_URL" | tar xz -C "$LIBGMP_DIR"
 fi
 speak "Restoring $LIBGMP_VER files from cache"
-rsync -av "$LIBGMP_DIR/ghc-libs/" "$WORK_DIR/vendor/ghc-libs"
+rsync -avq "$LIBGMP_DIR/ghc-libs/" "$WORK_DIR/vendor/ghc-libs"
 
 ########## stack exe ###############################################
 STACK_VER=${STACK_VER:-0.1.4.0}
@@ -73,7 +73,7 @@ if [ ! -e "$STACK_EXE" ]; then
   curl -# -L "$STACK_URL" | tar xz -C "$STACK_DIR"
 fi
 speak "Restoring stack-$STACK_VER"
-rsync -av "$STACK_EXE" "$WORK_DIR/vendor/bin/stack"
+rsync -avq "$STACK_EXE" "$WORK_DIR/vendor/bin/stack"
 chmod a+x "$WORK_DIR/vendor/bin/stack"
 
 ########## project build ###########################################
