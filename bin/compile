@@ -58,7 +58,7 @@ if [ ! -e "$LIBGMP_DIR" ]; then
   curl -# -L "$LIBGMP_URL" | tar xz -C "$LIBGMP_DIR"
 fi
 speak "Restoring $LIBGMP_VER files from cache"
-find "$LIBGMP_DIR/ghc-libs/" -exec cp -rP '{}' "$WORK_DIR/vendor/ghc-libs/" \;
+rsync -av "$LIBGMP_DIR/ghc-libs/" "$WORK_DIR/vendor/ghc-libs"
 
 ########## stack exe ###############################################
 STACK_VER=${STACK_VER:-0.1.4.0}
@@ -71,7 +71,7 @@ if [ ! -e "$STACK_EXE" ]; then
   curl -# -L "$STACK_URL" | tar xz -C "$STACK_DIR"
 fi
 speak "Restoring stack-$STACK_VER"
-cp -P "$STACK_EXE" "$WORK_DIR/vendor/bin/stack"
+rsync -av "$STACK_EXE" "$WORK_DIR/vendor/bin/stack"
 chmod a+x "$WORK_DIR/vendor/bin/stack"
 
 ########## project build ###########################################
@@ -79,10 +79,6 @@ speak "Running stack"
 cd "$BUILD_DIR"
 stack setup
 stack build --copy-bins
-
-# Save stack root
-speak "Saving .stack"
-cp -rP "$CACHE_DIR/.stack" "$WORK_DIR"
 
 # Set context environment variables.
 set-env PATH "$WORK_DIR/.local/bin:$PATH"
