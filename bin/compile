@@ -46,6 +46,7 @@ export LANG=en_US.UTF-8
 export LIBRARY_PATH=$WORK_DIR/vendor/ghc-libs:/usr/lib:$LIBRARY_PATH
 export LD_LIBRARY_PATH=$LIBRARY_PATH
 export PATH=$WORK_DIR/.local/bin:$WORK_DIR/vendor/bin:$PATH
+export STACK_ROOT=$CACHE_DIR/.stack
 
 ########## gmp #####################################################
 LIBGMP_VER=${LIBGMP_VER:-6.0.0a}
@@ -60,23 +61,17 @@ speak "Restoring $LIBGMP_VER files from cache"
 find "$LIBGMP_DIR/ghc-libs/" -exec cp -rP '{}' "$WORK_DIR/vendor/ghc-libs/" \;
 
 ########## stack exe ###############################################
-STACK_VER=${STACK_VER:-0.1.3.1}
-STACK_URL=${STACK_URL:-https://github.com/commercialhaskell/stack/releases/download/v"$STACK_VER"/stack-"$STACK_VER"-x86_64-linux.gz}
-STACK_EXE="$CACHE_DIR/stack-$STACK_VER"
+STACK_VER=${STACK_VER:-0.1.4.0}
+STACK_URL=${STACK_URL:-https://github.com/commercialhaskell/stack/releases/download/v"$STACK_VER"/stack-"$STACK_VER"-x86_64-linux.tar.gz}
+STACK_DIR="$CACHE_DIR/stack-$STACK_VER"
+STACK_EXE="$STACK_DIR/stack"
 if [ ! -e "$STACK_EXE" ]; then
   speak "Downloading stack-$STACK_VER"
-  curl -# -L "$STACK_URL" | gunzip > "$STACK_EXE"
+  curl -# -L "$STACK_URL" | tar xz -C "$STACK_DIR"
 fi
 speak "Restoring stack-$STACK_VER"
 cp -P "$STACK_EXE" "$WORK_DIR/vendor/bin/stack"
 chmod a+x "$WORK_DIR/vendor/bin/stack"
-
-########## stack dir ###############################################
-STACK_DIR="$CACHE_DIR/.stack"
-if [ -e "$STACK_DIR" ]; then
-  speak "Restoring .stack"
-  cp -rP "$STACK_DIR" "$WORK_DIR"
-fi
 
 ########## project build ###########################################
 speak "Running stack"
@@ -84,13 +79,12 @@ cd "$BUILD_DIR"
 stack setup
 stack build --copy-bins
 
-if [ ! -e "$STACK_DIR" ]; then
-  speak "Caching .stack"
-  cp -rP "$WORK_DIR/.stack" "$CACHE_DIR"
-fi
+# Save stack root
+speach "Saving .stack"
+cp -rP "$CACHE_DIR/.stack" "$WORK_DIR"
 
 # Set context environment variables.
-set-env PATH "/app/.local/bin:$PATH"
+set-env PATH "$WORK_DIR/.local/bin:$PATH"
 set-default-env LIBRARY_PATH /app/vendor/ghc-libs:/usr/lib
 set-default-env LD_LIBRARY_PATH /app/vendor/ghc-libs:/usr/lib
 
