@@ -67,6 +67,7 @@ STACK_DIR="$CACHE_DIR/stack-$STACK_VER"
 STACK_EXE="$STACK_DIR/stack"
 if [ ! -e "$STACK_EXE" ]; then
   speak "Downloading stack-$STACK_VER"
+  mkdir -p "$STACK_DIR"
   curl -# -L "$STACK_URL" | tar xz -C "$STACK_DIR"
 fi
 speak "Restoring stack-$STACK_VER"
