@@ -81,7 +81,7 @@ stack setup
 stack build --copy-bins
 
 # Save stack root
-speach "Saving .stack"
+speak "Saving .stack"
 cp -rP "$CACHE_DIR/.stack" "$WORK_DIR"
 
 # Set context environment variables.
