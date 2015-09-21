@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -f "$1"/stack.yaml ]; then
+if [ -n "$(find "$1" -name stack.yaml -print -quit)" ]; then
   echo "Haskell"
   exit 0
 else
