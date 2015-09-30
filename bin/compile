@@ -63,14 +63,14 @@ speak "Restoring $LIBGMP_VER files from cache"
 rsync -avq "$LIBGMP_DIR/ghc-libs/" "$WORK_DIR/vendor/ghc-libs"
 
 ########## stack exe ###############################################
-STACK_VER=${STACK_VER:-0.1.4.0}
+STACK_VER=${STACK_VER:-0.1.5.0}
 STACK_URL=${STACK_URL:-https://github.com/commercialhaskell/stack/releases/download/v"$STACK_VER"/stack-"$STACK_VER"-x86_64-linux.tar.gz}
 STACK_DIR="$CACHE_DIR/stack-$STACK_VER"
 STACK_EXE="$STACK_DIR/stack"
 if [ ! -e "$STACK_EXE" ]; then
   speak "Downloading stack-$STACK_VER"
   mkdir -p "$STACK_DIR"
-  curl -# -L "$STACK_URL" | tar xz -C "$STACK_DIR"
+  curl -# -L "$STACK_URL" | tar xz -C "$STACK_DIR" --strip-components=1
 fi
 speak "Restoring stack-$STACK_VER"
 rsync -avq "$STACK_EXE" "$WORK_DIR/vendor/bin/stack"
