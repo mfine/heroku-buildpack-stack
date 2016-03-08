@@ -93,6 +93,5 @@ mkdir -p "$BUILD_DIR/.local"
 mv "$WORK_DIR/vendor/ghc-libs" "$BUILD_DIR/vendor"
 mv "$WORK_DIR/.local/bin" "$BUILD_DIR/.local"
 
-stack exec quillio
 
 speak "Finished!"
