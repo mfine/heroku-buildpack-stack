@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-if [ -e "$1/stack.vars" ]; then
-  while read ln ; do
-    KEY=$ln
-    VALUE=${!KEY}
-    sed -ib "s/{{$KEY}}/$VALUE/g;" stack.yaml
-  done < stack.vars
-fi
 
 if [ -n "$(find "$1" -name stack.yaml -print -quit)" ]; then
   echo "Haskell"
