@@ -15,13 +15,6 @@ function speak (){
 
 speak "Starting..."
 
-if [ -e "$1/stack.vars" ]; then
-  while read ln ; do
-    KEY=$ln
-    VALUE=${!KEY}
-    sed -ib "s/{{$KEY}}/$VALUE/g;" stack.yaml
-  done < stack.vars
-fi
 
 BLACKLIST_REGEX="^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$"
 if [ -d "$ENV_DIR" ]; then
@@ -31,6 +24,14 @@ if [ -d "$ENV_DIR" ]; then
     export "$e=$(cat $ENV_DIR/$e)"
     :
   done
+fi
+
+if [ -e "$BUILD_DIR/stack.vars" ]; then
+  while read ln ; do
+    KEY=$ln
+    VALUE=${!KEY}
+    sed -ib "s/{{$KEY}}/$VALUE/g;" "$BUILD_DIR/stack.yaml"
+  done < "$BUILD_DIR/stack.vars"
 fi
 
 WORK_DIR=/app
