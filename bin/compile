@@ -15,6 +15,7 @@ function speak (){
 
 speak "Starting..."
 
+
 BLACKLIST_REGEX="^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$"
 if [ -d "$ENV_DIR" ]; then
   speak "Exporting config vars"
@@ -23,6 +24,14 @@ if [ -d "$ENV_DIR" ]; then
     export "$e=$(cat $ENV_DIR/$e)"
     :
   done
+fi
+
+if [ -e "$BUILD_DIR/stack.vars" ]; then
+  while read ln ; do
+    KEY=$ln
+    VALUE=${!KEY}
+    sed -ib "s/{{$KEY}}/$VALUE/g;" "$BUILD_DIR/stack.yaml"
+  done < "$BUILD_DIR/stack.vars"
 fi
 
 WORK_DIR=/app
