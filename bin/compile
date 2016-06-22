@@ -79,9 +79,7 @@ chmod a+x "$WORK_DIR/vendor/bin/stack"
 ########## stack vars ##############################################
 if [ -d "$ENV_DIR" ]; then
   speak "Substituting stack vars"
-  for e in $(ls "$ENV_DIR"); do
-    sed -i "s/{{$e}}/$(cat $ENV_DIR/$e)/g" "$BUILD_DIR/stack.yaml"
-  done
+  perl -p -i -e 's/\{\{([^}]+)\}\}/defined$ENV{$1}?$ENV{$1}:$&/eg'
 fi
 
 ########## project build ###########################################
