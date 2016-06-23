@@ -86,7 +86,7 @@ fi
 speak "Running stack"
 cd "$BUILD_DIR"
 stack setup
-stack build --copy-bins
+stack build --fast --copy-bins
 
 # Set context environment variables.
 set-env PATH "$WORK_DIR/.local/bin:$PATH"
