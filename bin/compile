@@ -82,6 +82,12 @@ if [ -d "$ENV_DIR" ]; then
   perl -p -i -e 's/\{\{([^}]+)\}\}/defined$ENV{$1}?$ENV{$1}:$&/eg' "$BUILD_DIR/stack.yaml"
 fi
 
+########## CV github token, if configured ##############################################
+
+if [ -v GH_AUTH ]; then
+  sed -i 's_github.com/collegevine_'"$GH_AUTH"'@github.com/collegevine_' "$BUILD_DIR/stack.yaml"
+fi
+
 ########## project build ###########################################
 speak "Running stack"
 cd "$BUILD_DIR"
