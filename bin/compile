@@ -26,7 +26,7 @@ if [ -d "$ENV_DIR" ]; then
 fi
 
 WORK_DIR=/app
-mkdir -p "$WORK_DIR/vendor"
+cp -R "$BUILD_DIR/." "$WORK_DIR"
 mkdir -p "$WORK_DIR/vendor/bin"
 mkdir -p "$WORK_DIR/vendor/ghc-libs"
 
@@ -60,7 +60,7 @@ if [ ! -e "$LIBGMP_DIR" ]; then
   curl -# -L "$LIBGMP_URL" | tar xz -C "$LIBGMP_DIR"
 fi
 speak "Restoring $LIBGMP_VER files from cache"
-rsync -avq "$LIBGMP_DIR/ghc-libs/" "$WORK_DIR/vendor/ghc-libs"
+cp -R "$LIBGMP_DIR/ghc-libs/." "$WORK_DIR/vendor/ghc-libs"
 
 ########## stack exe ###############################################
 STACK_VER=${STACK_VER:-1.1.2}
@@ -73,7 +73,7 @@ if [ ! -e "$STACK_EXE" ]; then
   curl -# -L "$STACK_URL" | tar xz -C "$STACK_DIR" --strip-components=1
 fi
 speak "Restoring stack-$STACK_VER"
-rsync -avq "$STACK_EXE" "$WORK_DIR/vendor/bin/stack"
+cp "$STACK_EXE" "$WORK_DIR/vendor/bin/stack"
 chmod a+x "$WORK_DIR/vendor/bin/stack"
 
 ########## stack vars ##############################################
@@ -83,20 +83,32 @@ if [ -d "$ENV_DIR" ]; then
 fi
 
 ########## project build ###########################################
+SANDBOX_DIR="$CACHE_DIR/.stack-work"
+if [ -e "$SANDBOX_DIR" ]; then
+    speak "Restoring .stack-work"
+    cp -R "$SANDBOX_DIR" "$WORK_DIR"
+else
+    mkdir -p "$SANDBOX_DIR"
+fi
+
 speak "Running stack"
-cd "$BUILD_DIR"
+cd "$WORK_DIR"
 stack setup
 stack build --fast --copy-bins
 
 # Set context environment variables.
 set-env PATH "$WORK_DIR/.local/bin:$PATH"
-set-default-env LIBRARY_PATH /app/vendor/ghc-libs:/usr/lib
-set-default-env LD_LIBRARY_PATH /app/vendor/ghc-libs:/usr/lib
+set-default-env LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:/usr/lib"
+set-default-env LD_LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:/usr/lib"
 
 speak "Making stack binaries available"
 mkdir -p "$BUILD_DIR/vendor"
 mkdir -p "$BUILD_DIR/.local"
 mv "$WORK_DIR/vendor/ghc-libs" "$BUILD_DIR/vendor"
 mv "$WORK_DIR/.local/bin" "$BUILD_DIR/.local"
+
+speak "Caching .stack-work"
+rsync -avq "$WORK_DIR/.stack-work/" "$SANDBOX_DIR"
+mv "$WORK_DIR/.stack-work" "$BUILD_DIR"
 
 speak "Finished!"
