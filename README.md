@@ -2,13 +2,13 @@
 
 [Heroku buildpack][2] for [Stack][3]. Based on the excellent [heroku-buildpack-ghc][4]
 
-### Useage
+### Usage
 
 Create an app with this buildpack:
 
     $ heroku create --buildpack https://github.com/mfine/heroku-buildpack-stack.git
 
-Set this buildpack on an exiting app:
+Set this buildpack on an existing app:
 
     $ heroku buildpacks:set https://github.com/mfine/heroku-buildpack-stack
 
