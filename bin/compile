@@ -26,7 +26,7 @@ if [ -d "$ENV_DIR" ]; then
 fi
 
 WORK_DIR=/app
-cp -R "$BUILD_DIR/." "$WORK_DIR"
+cp -Rp "$BUILD_DIR/." "$WORK_DIR"
 mkdir -p "$WORK_DIR/vendor/bin"
 mkdir -p "$WORK_DIR/vendor/ghc-libs"
 
@@ -60,7 +60,7 @@ if [ ! -e "$LIBGMP_DIR" ]; then
   curl -# -L "$LIBGMP_URL" | tar xz -C "$LIBGMP_DIR"
 fi
 speak "Restoring $LIBGMP_VER files from cache"
-cp -R "$LIBGMP_DIR/ghc-libs/." "$WORK_DIR/vendor/ghc-libs"
+cp -Rp "$LIBGMP_DIR/ghc-libs/." "$WORK_DIR/vendor/ghc-libs"
 
 ########## stack exe ###############################################
 STACK_VER=${STACK_VER:-1.2.0}
@@ -86,7 +86,7 @@ fi
 SANDBOX_DIR="$CACHE_DIR/.stack-work"
 if [ -e "$SANDBOX_DIR" ]; then
     speak "Restoring .stack-work"
-    cp -R "$SANDBOX_DIR" "$WORK_DIR"
+    cp -Rp "$SANDBOX_DIR" "$WORK_DIR"
 else
     mkdir -p "$SANDBOX_DIR"
 fi
