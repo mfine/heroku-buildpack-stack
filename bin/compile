@@ -93,6 +93,11 @@ fi
 speak "Installing PostgreSQL"
 apt-get -y install postgresql postgresql-contrib
 
+########## heroku toolbelt ##############################################
+
+speak "Installing Heroku toolbelt"
+wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+
 ########## project build ###########################################
 speak "Running stack"
 cd "$BUILD_DIR"
