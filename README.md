@@ -2,7 +2,7 @@
 
 [Heroku buildpack][2] for [Stack][3]. Based on the excellent [heroku-buildpack-ghc][4]
 
-### Useage
+### Usage
 
 Create an app with this buildpack:
 
