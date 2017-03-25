@@ -35,6 +35,12 @@ before compilation, the `stack.yaml` will be substituted as follows:
     -location:
         git: https://mfine:abc123@github.com/mfine/heroku-buildpack-stack.git
 
+
+### Makefile Support
+This buildpack now supports an optional Makefile, in case you need to coordinate other build steps with Stack. It assumes that the Makefile includes a `make install` target that uses the Stack build command with the flag `--copy-bins`. For example, a possible `install` target configuration in the Makefile could be:
+
+    install: stack build --copy-bins
+
 [1]: https://github.com/mfine/heroku-buildpack-stack
 [2]: http://devcenter.heroku.com/articles/buildpacks
 [3]: https://github.com/commercialhaskell/stack

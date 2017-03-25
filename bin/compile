@@ -97,9 +97,11 @@ cd "$WORK_DIR"
 if [ -f "$BUILD_DIR/Makefile" ]; then
     speak "Makefile detected"
     make -C "$BUILD_DIR"
+    make -C "$BUILD_DIR" install
+else
+    stack setup
+    stack build --fast --copy-bins
 fi
-stack setup
-stack build --fast --copy-bins
 
 # Set context environment variables.
 set-env PATH "$WORK_DIR/.local/bin:$PATH"
