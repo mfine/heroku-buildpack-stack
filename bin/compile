@@ -93,8 +93,15 @@ fi
 
 speak "Running stack"
 cd "$WORK_DIR"
-stack setup
-stack build --fast --copy-bins
+# Makefile support (if you need other build tools than Stack that you need to use in conjunction)
+if [ -f "$BUILD_DIR/Makefile" ]; then
+    speak "Makefile detected"
+    make -C "$BUILD_DIR"
+    make -C "$BUILD_DIR" install
+else
+    stack setup
+    stack build --fast --copy-bins
+fi
 
 # Set context environment variables.
 set-env PATH "$WORK_DIR/.local/bin:$PATH"
@@ -109,6 +116,6 @@ mv "$WORK_DIR/.local/bin" "$BUILD_DIR/.local"
 
 speak "Caching .stack-work"
 rsync -avq "$WORK_DIR/.stack-work/" "$SANDBOX_DIR"
-mv "$WORK_DIR/.stack-work" "$BUILD_DIR"
+cp -Rp "$WORK_DIR/.stack-work" "$BUILD_DIR"
 
 speak "Finished!"
