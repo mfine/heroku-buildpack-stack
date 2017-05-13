@@ -96,8 +96,8 @@ cd "$WORK_DIR"
 # Makefile support (if you need other build tools than Stack that you need to use in conjunction)
 if [ -f "$BUILD_DIR/Makefile" ]; then
     speak "Makefile detected"
-    make -C "$BUILD_DIR"
-    make -C "$BUILD_DIR" install
+    make -I "$BUILD_DIR"
+    make -I "$BUILD_DIR" install
 else
     stack setup
     stack build --fast --copy-bins
