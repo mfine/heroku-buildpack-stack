@@ -26,6 +26,8 @@ if [ -d "$ENV_DIR" ]; then
 fi
 
 WORK_DIR=/app
+echo "AAAAAAAAAAAA"
+cat "$WORK_DIR/Makefile"
 cp -Rp "$BUILD_DIR/." "$WORK_DIR"
 echo "XXXXXXXXXXXX"
 ls "$BUILD_DIR"
