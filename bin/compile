@@ -27,6 +27,11 @@ fi
 
 WORK_DIR=/app
 cp -Rp "$BUILD_DIR/." "$WORK_DIR"
+echo "XXXXXXXXXXXX"
+ls "$BUILD_DIR"
+echo "YYYYYYYYYYYY"
+ls "$WORK_DIR"
+echo "ZZZZZZZZZZZZ"
 mkdir -p "$WORK_DIR/vendor/bin"
 mkdir -p "$WORK_DIR/vendor/ghc-libs"
 
