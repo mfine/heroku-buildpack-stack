@@ -12,6 +12,10 @@ Set this buildpack on an existing app:
 
     $ heroku buildpacks:set https://github.com/mfine/heroku-buildpack-stack
 
+Then, assuming your application is [binding to `$PORT`](https://devcenter.heroku.com/articles/dynos#web-dynos), run your app by [creating a `Procfile`](https://devcenter.heroku.com/articles/procfile) at your project root:
+
+    $ echo "web: /app/.local/bin/YOURAPPNAME-exe" >> Procfile
+
 ### Templating stack.yaml
 
 To avoid committing secrets into `stack.yaml` for access to private
