@@ -12,9 +12,13 @@ Set this buildpack on an existing app:
 
     $ heroku buildpacks:set https://github.com/mfine/heroku-buildpack-stack
 
-Then, assuming your application is [binding to `$PORT`](https://devcenter.heroku.com/articles/dynos#web-dynos), run your app by [creating a `Procfile`](https://devcenter.heroku.com/articles/procfile) at your project root:
+Binary executables are placed in `/app/.local/bin/` after compilation, a directory which Heroku includes in your `$PATH`, so assuming that your application is [binding to `$PORT`](https://devcenter.heroku.com/articles/dynos#web-dynos), you can serve your app by [creating a `Procfile`](https://devcenter.heroku.com/articles/procfile) at your project root that defines a `web` process type for the `executable` defined in your `.cabal` file:
 
-    $ echo "web: /app/.local/bin/YOURAPPNAME-exe" >> Procfile
+    $ cat *.cabal | grep executable
+    executable YOURAPPNAME-exe
+
+    $ echo "web: YOURAPPNAME-exe" >> Procfile
+
 
 ### Templating stack.yaml
 

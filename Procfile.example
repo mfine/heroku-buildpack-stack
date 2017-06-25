@@ -1,1 +1,1 @@
-web: /app/.local/bin/YOURAPPNAME-exe
+web: YOURAPPNAME-exe   # $ cat *.cabal | grep executable
