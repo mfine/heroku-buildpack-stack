@@ -104,7 +104,7 @@ else
 fi
 
 # Set context environment variables.
-set-env PATH "$WORK_DIR/.local/bin:$PATH"
+set-env PATH "$WORK_DIR/.local/bin:\$PATH"
 set-default-env LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:/usr/lib"
 set-default-env LD_LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:/usr/lib"
 
