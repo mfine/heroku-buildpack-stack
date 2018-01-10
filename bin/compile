@@ -45,7 +45,7 @@ function set-default-env (){
 }
 
 export LANG=en_US.UTF-8
-export LIBRARY_PATH=$WORK_DIR/vendor/ghc-libs:/usr/lib:$LIBRARY_PATH
+export LIBRARY_PATH=$WORK_DIR/vendor/ghc-libs:$WORK_DIR/vendor/lib:/usr/lib:$LIBRARY_PATH
 export LD_LIBRARY_PATH=$LIBRARY_PATH
 export PATH=$WORK_DIR/.local/bin:$WORK_DIR/vendor/bin:$PATH
 export STACK_ROOT=$CACHE_DIR/.stack
@@ -104,9 +104,9 @@ else
 fi
 
 # Set context environment variables.
-set-env PATH "$WORK_DIR/.local/bin:$WORK_DIR/vendor:\$PATH"
-set-default-env LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:$WORK_DIR/vendor:/usr/lib"
-set-default-env LD_LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:$WORK_DIR/vendor:/usr/lib"
+set-env PATH "$WORK_DIR/.local/bin:$WORK_DIR/vendor/bin:\$PATH"
+set-default-env LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:$WORK_DIR/vendor/lib:/usr/lib"
+set-default-env LD_LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:$WORK_DIR/vendor/lib:/usr/lib"
 
 speak "Making stack binaries available"
 mkdir -p "$BUILD_DIR/vendor"
