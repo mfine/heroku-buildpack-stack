@@ -104,9 +104,9 @@ else
 fi
 
 # Set context environment variables.
-set-env PATH "$WORK_DIR/.local/bin:\$PATH"
-set-default-env LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:/usr/lib"
-set-default-env LD_LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:/usr/lib"
+set-env PATH "$WORK_DIR/.local/bin:$WORK_DIR/vendor:\$PATH"
+set-default-env LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:$WORK_DIR/vendor:/usr/lib"
+set-default-env LD_LIBRARY_PATH "$WORK_DIR/vendor/ghc-libs:$WORK_DIR/vendor:/usr/lib"
 
 speak "Making stack binaries available"
 mkdir -p "$BUILD_DIR/vendor"
