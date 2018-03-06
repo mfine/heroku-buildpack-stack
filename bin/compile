@@ -100,7 +100,7 @@ if [ -f "$BUILD_DIR/Makefile" ]; then
     make install
 else
     stack setup
-    stack build --fast --copy-bins
+    stack build --copy-bins
 fi
 
 # Set context environment variables.
