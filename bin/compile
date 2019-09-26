@@ -63,7 +63,7 @@ speak "Restoring $LIBGMP_VER files from cache"
 cp -Rp "$LIBGMP_DIR/ghc-libs/." "$WORK_DIR/vendor/ghc-libs"
 
 ########## stack exe ###############################################
-STACK_VER=${STACK_VER:-1.7.0.3}
+STACK_VER=${STACK_VER:-2.1.3}
 STACK_URL=${STACK_URL:-https://github.com/commercialhaskell/stack/releases/download/v"$STACK_VER"/stack-"$STACK_VER"-linux-x86_64.tar.gz}
 STACK_DIR="$CACHE_DIR/stack-$STACK_VER"
 STACK_EXE="$STACK_DIR/stack"
