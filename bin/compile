@@ -94,7 +94,7 @@ fi
 speak "Running stack"
 cd "$WORK_DIR"
 # Makefile support (if you need other build tools than Stack that you need to use in conjunction)
-if [ -f "$BUILD_DIR/Makefile" ]; then
+if [ -f "$BUILD_DIR/Makefile" -a ! -f "$BUILD_DIR/.ignore-Makefile" ]; then
     speak "Makefile detected"
     make
     make install
